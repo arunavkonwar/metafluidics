@@ -1,0 +1,24 @@
+/**
+* Metafluidics User Login CSS
+*
+* Custom styling for the admin-facing user login page
+* of the Metafluidics site
+*/
+
+#login { padding: 30px; text-align: center; }
+
+/* logo */
+#login h1 { display: none; }
+
+/* form */
+.login form { box-shadow: none; -webkit-box-shadow: none;  display: inline-block; text-align: left; }
+.login form input:focus { border-color: #DC2578; box-shadow: 0 0 2px #DC2578; }
+
+/* interim login */
+.interim-login .site-tools {
+  display: none;
+}
+
+.interim-login #login {
+  padding: 20px;
+}

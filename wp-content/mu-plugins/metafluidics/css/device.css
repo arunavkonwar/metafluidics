@@ -1,0 +1,29 @@
+/**
+* Metafluidics Device Admin CSS
+*
+* Custom styling for the admin-facing device add/edit page
+* of the Metafluidics site
+*/
+
+p.uploaded-item {
+  border: 2px solid #ccc;
+  display: inline-block;
+  margin: 5px;
+  position: relative;
+}
+
+p.uploaded-item img {
+  max-width: 150px;
+  max-height: 150px;
+}
+
+p.uploaded-item .delete-item {
+  position: absolute;
+  top: -2px;
+  right: -2px;
+  background-color: #fff;
+}
+
+.inside textarea {
+  width: 100%;
+}

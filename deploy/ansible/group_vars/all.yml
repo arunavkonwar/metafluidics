@@ -1,0 +1,173 @@
+#########
+# PROJECT
+#########
+
+# Certain tasks may operate in a less secure (but more convenient) manner, eg.
+# enabling passwordless sudo or generating self-signed ssl certs, when testing
+# locally, in Vagrant. But not in production!
+env: development
+
+# This var is referenced by a few other vars, eg. git_repo, hostname, site_fqdn.
+project_name: metafluidics
+
+# Vagrant box hostname and FQDN. The site_fqdn setting should match the vagrant
+# inventory ansible_ssh_host and Vagrantfile config.hostsupdater.aliases
+# settings.
+hostname: metafluidics-vagrant
+site_fqdn: "{{project_name}}.loc"
+
+# Location under which all WordPress files will be installed.
+base_path: /mnt
+
+# Vagrant box synced folder. This should match the config.vm.synced_folder
+# setting in the Vagrantfile, and should be different than the public_dir var.
+synced_folder: "{{base_path}}/vagrant"
+
+##############
+# PROVISIONING
+##############
+
+# Keys to be used by Apt.
+apt_keys:
+  - "https://deb.nodesource.com/gpgkey/nodesource.gpg.key"
+
+# Ppas to be added to Apt.
+apt_ppas:
+  - "ppa:git-core/ppa"
+
+# Any Apt packages to install. Apt package versions may be specified like
+# - git=2.1.0
+apt_packages:
+  - nginx
+  - git
+  - mysql-server
+  - python-mysqldb
+  - memcached
+  - php5
+  - php5-fpm
+  - php5-mysql
+  - php5-curl
+  - php5-memcached
+  - php5-gd
+  - libssh2-php
+  - postfix
+  - ca-certificates
+  - mailutils
+
+############
+# WEB SERVER
+############
+
+# Should the nginx server use HTTPS instead of HTTP?
+ssl: false
+
+# If ssl is enabled, these cert/key files will be used by nginx. Self-signed
+# cert/key files will be auto-generated if they don't already exist.
+ssl_cert_path: /etc/ssl/server.cert
+ssl_key_path: /etc/ssl/server.key
+
+# Use a custom parameter for stronger DHE key exchange.
+dhe_param_path: /etc/ssl/certs/dhparam.pem
+
+# Nginx dir and conf dir.
+nginx_dir: /etc/nginx
+conf_dir: "{{nginx_dir}}/conf.d"
+
+# Nginx templated configuration files to create.
+shared:
+  - {file: ssl_params, directory: "{{nginx_dir}}"}
+  - {file: gzip_params, directory: "{{nginx_dir}}"}
+confs:
+  - {file: site.conf, directory: "{{conf_dir}}"}
+
+######
+# SMTP
+######
+
+postfix_relayhost: "[smtp.gmail.com]:587"
+postfix_smtp_sasl_user: metafluidics.bocoup.test@gmail.com
+postfix_smtp_sasl_password: $ecurePa$$w0rd
+
+postfix_smtpd_use_tls: yes
+postfix_myhostname: "{{inventory_hostname}}"
+postfix_myorigin: $myhostname
+postfix_smtp_sasl_auth_enable: yes
+postfix_smtp_tls_cafile: /etc/ssl/certs/Thawte_Premium_Server_CA.pem
+postfix_mynetworks: "127.0.0.0/8 [::ffff:127.0.0.0]/104 [::1]/128"
+postfix_inet_interfaces: loopback-only
+postfix_mydestination: $mydomain, $myhostname, localhost.$mydomain, localhost
+postfix_local_recipient_map: ""
+
+postfix_generic_maps: ""
+
+# Relay all mail going to local users (e.g. root or cron) to another mail address
+postfix_local_user_relay_address: ""
+
+# Useful if you use a SMTP server for relay that doesn't allow
+# arbitrary sender addresses.
+postfix_rewrite_sender_address: ""
+
+# Send a test mail to this address when Postfix configuration changes
+postfix_send_test_mail_to: "{{postfix_smtp_sasl_user}}"
+
+# Queue
+bounce_queue_lifetime: 1h
+maximal_queue_lifetime: 1h
+maximal_backoff_time: 15m
+minimal_backoff_time: 5m
+queue_run_delay: 5m
+
+###########
+# WORDPRESS
+###########
+
+# Version and checksum of the WordPress download archive. From this page:
+# https://wordpress.org/download/release-archive/
+wp_version: 4.4
+wp_version_md5: 9b965ba1a1b0e033b4c090dd0b6d6ee7
+
+# Database configuration.
+wp_db_name: wordpress_metafluidics
+wp_db_password: root
+wp_db_user: root
+wp_db_host: localhost
+wp_db_table_prefix: wp_
+
+wp_user: www-data
+wp_group: www-data
+wp_install_dir: "{{base_path}}/wordpress-{{wp_version}}"
+public_dir: "{{base_path}}/www"
+
+# The location of the theme.
+theme_path: "{{base_path}}/www/wp-content/themes/metafluidics/"
+
+# Enable debugging in WordPress.
+wp_debug: true
+
+# Salts and keys. Change these to invalidate all existing cookies.
+# https://api.wordpress.org/secret-key/1.1/salt/
+wp_salts_keys: |
+  define('AUTH_KEY',         'ul,MVLPyp@ZgsYjXzGoatv%wPM,ObzF|zNl|9Bpw0ER/(8 CY{+A%m(><!L|tjYX');
+  define('SECURE_AUTH_KEY',  'NS0[Q)/TE[_U@NhAaPpu,M|a8y(c:.l:s^1?r$}P/=ME7oKg+-V}?1Uhe+Ha@7|x');
+  define('LOGGED_IN_KEY',    ')QOb2A%,*(x-6a]W`ERgaPj*$APh/4s.m6#7>#I,/|DXe6v!/ozyU|UG~(J|(Y#(');
+  define('NONCE_KEY',        '&K>mqu>Y{aCI5K<M}P+YYyG763?1n:, N/Gw226jWr>Cx=~wZPiNjM.toMec(Due');
+  define('AUTH_SALT',        'U~fNQ!V+ moUD!$Xd{m@L6O|:~Qh@t;3E2fd%,6lQh9h/l+7FDsTOL0Z,F7z?2Qq');
+  define('SECURE_AUTH_SALT', 'B+G*P0t>qZ/Ve};];au,?r2kuehkD3Fa|LOUzEZV2{&g6$}8M6`g@}4_nV6zD,jE');
+  define('LOGGED_IN_SALT',   '$-FH#3+/`Lor{r6,Y|:SU-B0{+q{nvb-l,PAf2fj1S[,}78T/_[`dWi@F<nsvEtR');
+  define('NONCE_SALT',       '9A7xSv=7&9Y:E8k.[r+xoSm$N^^~TD3K&#w~x-7cCI8+c3?&#Ra.o0-i&JomRPdq');
+
+# AWS
+wp_aws_config_staging: |
+  define( 'AWS_ACCESS_KEY_ID', 'AKIAIHCKTCJ7EMKOI7QA' );
+  define( 'AWS_SECRET_ACCESS_KEY', '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' );
+
+wp_aws_config_production: |
+  define( 'AWS_ACCESS_KEY_ID', 'AKIAI5HH4FUERTNAQNZQ' );
+  define( 'AWS_SECRET_ACCESS_KEY', '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' );
+
+############
+# EXTRA VARS
+############
+
+# wordpress role: Force install of the specified version of WordPress.
+wp_force: false

