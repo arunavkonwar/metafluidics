@@ -167,6 +167,22 @@
 			}
 			echo '</table>';
 		?>
+
+		<!-- edit arunav -->
+		<div id="license">
+			<h2>License:</h2>
+
+			<?php
+				$metaContent = get_post_meta($post->ID, 'metafluidics-license', true);
+
+				if ( $metaContent ) {
+					echo $metaContent;
+				}
+				else {
+					echo "No description given.";
+				}
+			?>
+		</div>
 	</div><!--//end #metadata -->
 
 </section>

@@ -6,9 +6,20 @@
   * adds custom meta fields to this post type
   * enqueues admin scripts to allow media upload
 */
+// edit arunav step 3
+//console log function
+function debug_to_console( $data ) {
+  $output = $data;
+  if ( is_array( $output ) )
+  $output = implode( ',', $output);
+
+  echo "<script>console.log( 'Debug Objects: " . $output . "' );</script>";
+}
+
 
 // set collection of labels for DRYness
-$metaBoxCollection = ['description', 'thumbnail', 'images', 'design_files', 'bill_of_materials', 'build_instructions', 'software', 'likes','views','downloads_total','publications', 'tutorials', 'remixed', 'parts'];
+  // edit arunav step 1
+$metaBoxCollection = ['description', 'license','thumbnail', 'images', 'design_files', 'bill_of_materials', 'build_instructions', 'software', 'likes','views','downloads_total','publications', 'tutorials', 'remixed', 'parts'];
 $metaBoxFileCollection = ['thumbnail', 'images', 'design_files', 'bill_of_materials', 'build_instructions', 'software'];
 
 // allow image types in admin custom posts
@@ -93,6 +104,39 @@ function create_post_type_metafluidics_device() {
       'teeny'         => true
       )
     );
+  }
+
+  // generate "license" meta box
+  // edit arunav step 2
+  function metafluidics_device_license_callback($post) {
+
+    wp_nonce_field( 'metafluidics_license_save_data', 'metafluidics_license_nonce' );
+    $value = get_post_meta( $post->ID, 'metafluidics-license', true );
+    //debug_to_console($value);
+       ?>
+
+
+
+    <label for="meta-box-dropdown">Select License type</label>
+    <select id="metafluidics-license" name="metafluidics-license">
+    <?php 
+    $option_values = array('Attribution: CC BY', 'Attribution-ShareAlike: CC BY-SA', 'Attribution-NoDerivs: CC BY-ND', 'Attribution-NonCommerical: CC BY-NC', 'Attribution-NonCommercial-ShareAlike: CC BY-NC-SA', 'Attribution-NonCommercial-NoDerivs: CC BY-NC-ND');
+
+    foreach($option_values as $key => $value) 
+    {
+        if($value == get_post_meta($post->ID, "metafluidics-license", true))
+        {
+            ?>
+                <option selected><?php echo $value; ?></option>
+            <?php    
+        }
+        else
+        {
+            ?>
+                <option><?php echo $value; ?></option>
+            <?php
+        }
+    }              
   }
 
 
@@ -485,6 +529,11 @@ function create_post_type_metafluidics_device() {
   function metafluidics_device_meta_save_data($post_id) {
     // set collection of labels for DRYness
     global $metaBoxCollection, $metaBoxFileCollection;
+
+    // edit arunav step 4
+    $my_data1 = $_POST['metafluidics-license'];
+    update_post_meta( $post_id, 'metafluidics-license', $my_data1 );
+    // end of edit
 
     foreach ( $metaBoxCollection as $metaBoxLabel ) {
 

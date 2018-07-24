@@ -35,6 +35,15 @@ get_header(); ?>
 				      $descriptionText = sanitize_text_field( $_POST['device-description'] );
 				    }
 
+
+				    // edit arunav step 2
+				    if ( isset( $_POST['device-license'] ) ) {
+				      $deviceLicense = $_POST['device-license'];
+				    }
+
+
+
+
 						if ( isset( $_POST['is-draft'] ) && $_POST['is-draft'] === 'true' ) {
 							$postStatus = 'draft';
 						}
@@ -94,8 +103,10 @@ get_header(); ?>
 				    }
 
 				    // create post
+				    // edit arunav step 3
 				    $post = array(
 				      'post_content'   => $descriptionText,
+				      'license'			=> $deviceLicense,
 				      'post_title'     => $nameText,
 				      'comment_status' => 'open',
 				      'post_status'    => $postStatus,
@@ -117,6 +128,9 @@ get_header(); ?>
 
 				      // post successfully created! add custom meta data
 				      update_post_meta( $newPostID, 'metafluidics-device-description', $descriptionText );
+
+				      // edit arunav step 4
+				      update_post_meta( $newPostID, 'metafluidics-license', $deviceLicense );
 
 							$metaArray = array('thumbnail','images','design-files','software','bill-of-materials','publications','tutorials','remixed','parts');
 
@@ -186,6 +200,7 @@ get_header(); ?>
 				          	  <p class="tip">Short and sweet - think of this as an overview or abstract.</p>
 				          	</label>
 				        	</div>
+
 
 				        	<!-- DEVICE TAGS - KEYWORDS -->
 
@@ -466,6 +481,24 @@ get_header(); ?>
 											<button role="button" class="button url-add">+ Add Another URL</button>
 										</label>
 									</div>
+
+							<!-- LICENSE -->
+				        	<!--edit arunav step 1-->
+				        	<div>
+				          	<label for="description" class="description">Type of license? <br><br>
+								  <select id="device-license" name="device-license">
+								    <option value="Attribution: CC BY">Attribution: CC BY</option>
+								    <option value="Attribution-ShareAlike: CC BY-SA">Attribution-ShareAlike: CC BY-SA</option>
+								    <option value="Attribution-NoDerivs: CC BY-ND">Attribution-NoDerivs: CC BY-ND</option>
+								    <option value="Attribution-NonCommerical: CC BY-NC">Attribution-NonCommerical: CC BY-NC</option>
+								    <option value="Attribution-NonCommercial-ShareAlike: CC BY-NC-SA">Attribution-NonCommercial-ShareAlike: CC BY-NC-SA</option>
+								    <option value="Attribution-NonCommercial-NoDerivs: CC BY-NC-ND">Attribution-NonCommercial-NoDerivs: CC BY-NC-ND</option>
+								  </select>	
+								  <p class="tip sub">If you have questions about which license best suits your preference in open sourcing your device, please refer to this site for more information:
+
+<a href="https://creativecommons.org/licenses/" target="_blank">https://creativecommons.org/licenses/</a> </p>
+							</label>					          
+				        	</div>
 
 				        	<!-- DEVICE CREATE SUBMISSION -->
 
