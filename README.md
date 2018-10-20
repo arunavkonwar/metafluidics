@@ -1,5 +1,7 @@
 # metafluidics
 
+![MIT News](http://news.mit.edu/sites/mit.edu.newsoffice/files/images/2017/MIT-Open-Micro_0.jpg)
+
 ## Useful links
 
 Staging
